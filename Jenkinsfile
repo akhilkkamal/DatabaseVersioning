@@ -2,19 +2,29 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Setting up virtual env') {
             steps {
-                echo 'Building..'
+                sh '''#!/bin/bash
+                    python3 -m venv .venv
+
+                    source .venv/bin/activate
+                    python3 -m pip install --upgrade pip
+                    pip install -r requirements.txt
+                    '''
             }
         }
-        stage('Test') {
+        stage('Alembic Test') {
             steps {
-                echo 'Testing..'
+                sh '''#!/bin/bash
+                    alembic -c ./alembic.ini -x parm_config=./config.ini upgrade head --sql
+                    '''
             }
         }
-        stage('Deploy') {
+        stage('Alembic Deploy') {
             steps {
-                echo 'Deploying....'
+                sh '''#!/bin/bash
+                    alembic -c ./alembic.ini -x parm_config=./config.ini upgrade head
+                    '''
             }
         }
     }
