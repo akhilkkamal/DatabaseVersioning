@@ -17,10 +17,11 @@ pipeline {
             }
         }
         stage('Alembic Test') {
+            when { anyOf { branch 'dev'; branch 'prd'} }
             steps {
                 sh '''#!/bin/bash
                     source .venv/bin/activate
-                    alembic -c ./alembic/alembic.ini -x parm_config=./alembic/${BRANCH_ENV}_config.ini upgrade head --sql
+                    alembic -c ./alembic/alembic.ini -x parm_config=./alembic/config_${BRANCH_ENV}.ini upgrade head --sql
                     '''
             }
         }
@@ -29,7 +30,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     source .venv/bin/activate
-                    alembic -c ./alembic/alembic.ini -x parm_config=./alembic/${BRANCH_ENV}_config.ini upgrade head
+                    alembic -c ./alembic/alembic.ini -x parm_config=./alembic/config_${BRANCH_ENV}.ini upgrade head
                     '''
             }
         }
