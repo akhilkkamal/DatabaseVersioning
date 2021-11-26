@@ -17,6 +17,7 @@ pipeline {
             }
         }
         stage('Alembic Test') {
+            when { anyOf { branch 'dev'; branch 'prd'} }
             steps {
                 sh '''#!/bin/bash
                     source .venv/bin/activate
