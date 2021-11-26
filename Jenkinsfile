@@ -11,7 +11,7 @@ pipeline {
                     python3 -m pip install --upgrade pip
                     pwd
                     ls
-                    pip install -r requirements.txt
+                    pip install -r requirement.txt
                     '''
             }
         }
