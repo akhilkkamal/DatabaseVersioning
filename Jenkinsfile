@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+    BRANCH_ENV = "${env.BRANCH_NAME}"
+    }
+
     stages {
         stage('Setting up virtual env') {
             steps {
@@ -16,15 +20,16 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     source .venv/bin/activate
-                    alembic -c ./alembic.ini -x parm_config=./config.ini upgrade head --sql
+                    alembic -c ./alembic/alembic.ini -x parm_config=./alembic/${BRANCH_ENV}_config.ini upgrade head --sql
                     '''
             }
         }
         stage('Alembic Deploy') {
+            when { anyOf { branch 'dev'; branch 'prd'} }
             steps {
                 sh '''#!/bin/bash
                     source .venv/bin/activate
-                    alembic -c ./alembic.ini -x parm_config=./config.ini upgrade head
+                    alembic -c ./alembic/alembic.ini -x parm_config=./alembic/${BRANCH_ENV}_config.ini upgrade head
                     '''
             }
         }
