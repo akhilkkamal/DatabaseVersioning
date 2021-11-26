@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     stages {
         stage('Setting up virtual env') {
             steps {
@@ -9,8 +8,6 @@ pipeline {
 
                     source .venv/bin/activate
                     python3 -m pip install --upgrade pip
-                    pwd
-                    ls
                     pip install -r requirement.txt
                     '''
             }
@@ -18,6 +15,7 @@ pipeline {
         stage('Alembic Test') {
             steps {
                 sh '''#!/bin/bash
+                    source .venv/bin/activate
                     alembic -c ./alembic.ini -x parm_config=./config.ini upgrade head --sql
                     '''
             }
@@ -25,6 +23,7 @@ pipeline {
         stage('Alembic Deploy') {
             steps {
                 sh '''#!/bin/bash
+                    source .venv/bin/activate
                     alembic -c ./alembic.ini -x parm_config=./config.ini upgrade head
                     '''
             }
